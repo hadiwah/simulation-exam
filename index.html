@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISTQB CTFL v4.0 Full 40 Questions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .option-card:hover { border-color: #3b82f6; background-color: #eff6ff; }
+        .selected-option { border-color: #2563eb !important; background-color: #dbeafe !important; font-weight: 600; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-[#1e293b]">
+
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-1.5 rounded-lg shadow-sm">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <span class="font-bold text-slate-800 tracking-tight uppercase text-sm">Full Exam: Simulation ISTQB CTFL v4.0</span>
+            </div>
+            <div id="timer-display" class="bg-amber-50 text-amber-700 px-4 py-1.5 rounded-full border border-amber-200 font-mono font-bold text-sm">
+                60:00
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Sidebar -->
+        <div class="lg:col-span-1 order-2 lg:order-1">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 sticky top-24">
+                <h3 class="font-bold text-slate-700 mb-4 text-xs uppercase tracking-widest">Peta Soal (40)</h3>
+                <div class="grid grid-cols-5 gap-2" id="question-nav"></div>
+                <div class="mt-6 pt-6 border-t border-slate-100 space-y-2 text-[10px] text-slate-500 font-medium">
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-blue-600 rounded"></div> Sedang Dikerjakan</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 bg-blue-100 border border-blue-400 rounded"></div> Sudah Dijawab</div>
+                </div>
+                <div class="mt-8">
+                    <button onclick="triggerFinish()" class="w-full py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 shadow-lg shadow-rose-200 transition-all text-sm">
+                    Selesaikan Ujian Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-3 order-1 lg:order-2">
+            <div id="quiz-container" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden min-h-[500px] flex flex-col">
+                <div class="bg-slate-50 px-8 py-4 border-b border-slate-100 flex justify-between items-center">
+                    <span id="current-q-label" class="text-xs font-bold text-slate-500 uppercase tracking-widest">Pertanyaan 1</span>
+                    <span class="text-xs bg-white px-2 py-1 rounded border border-slate-200 text-slate-400 font-medium" id="q-category">Loading...</span>
+                </div>
+                
+                <div class="p-8 flex-grow">
+                    <h2 id="question-text" class="text-lg md:text-xl font-medium text-slate-800 leading-relaxed mb-8">
+                        Memuat pertanyaan...
+                    </h2>
+                    <div id="options-list" class="space-y-3"></div>
+                </div>
+
+                <div class="px-8 py-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                    <button id="btn-prev" class="px-5 py-2.5 text-slate-600 font-semibold hover:bg-slate-200 rounded-xl transition-all disabled:opacity-30">Sebelumnya</button>
+                    <button id="btn-next" class="px-8 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all">Lanjut</button>
+                </div>
+            </div>
+
+            <div id="result-screen" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-10 text-center">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Hasil Simulasi</h2>
+                <div class="flex justify-center gap-12 my-10">
+                    <div>
+                        <div class="text-5xl font-black text-slate-800" id="final-score">0/40</div>
+                        <div class="text-xs uppercase font-bold text-slate-400 mt-1">Jawaban Benar</div>
+                    </div>
+                    <div>
+                        <div class="text-5xl font-black" id="pass-status">-</div>
+                        <div class="text-xs uppercase font-bold text-slate-400 mt-1">Status Lulus (Min 26/40)</div>
+                    </div>
+                </div>
+                <div id="topic-analysis" class="text-left max-w-lg mx-auto p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-4 mb-8"></div>
+                <button onclick="location.reload()" class="bg-slate-900 text-white px-10 py-3 rounded-xl font-bold hover:bg-black transition-all">Ulangi Ujian</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div class="bg-white border-b bottom-0">
+        <div class="max-w-6xl mx-auto justify-between items-center">
+            <h3 class="font-bold text-slate-800 tracking-tight uppercase text-sm">Simulasi di atas sekarang berisi **40 soal lengkap** yang mencakup seluruh domain silabus ISTQB CTFL v4.0.</h3> 
+            <ul>Panduan Lulus:
+                <li>1.  **Passing Grade:** Anda memerlukan minimal **26 jawaban benar (65%)** dari 40 soal untuk lulus.</li>
+                <li>2.  **Manajemen Waktu:** Anda memiliki waktu **60 menit**. Di ujian asli, gunakan teknik eliminasi jawaban yang jelas-jelas salah terlebih dahulu.</li>
+                <li>3.  **Fokus Belajar:** Jika hasil simulasi menunjukkan skor rendah pada **Bab 4 (Test Design)**, pelajari kembali teknik *Boundary Value Analysis* dan *Equivalence Partitioning*, karena bab ini biasanya memiliki soal K3 (penerapan kasus) yang paling menantang.</li>
+            </ul><br>
+            <span class="font-bold text-slate-800 tracking-tight uppercase text-sm">Silakan mulai simulasi di panel preview. Jika ada soal yang membingungkan atau Anda ingin pembahasan kunci jawabannya, beri tahu sa.. (sebagian teks hilang)</span>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // CHAPTER 1 & 2
+            { q: "Manakah yang merupakan tujuan utama dari pengujian?", options: ["Membuktikan bahwa program tidak memiliki bug.", "Memberikan informasi untuk pengambilan keputusan berdasarkan tingkat risiko.", "Menghukum developer atas kesalahan coding.", "Menjamin 100% fungsionalitas sistem."], ans: 1, cat: "Fundamentals" },
+            { q: "Kapan aktivitas pengujian sebaiknya dimulai?", options: ["Segera setelah kode selesai ditulis.", "Setelah dokumentasi user manual selesai.", "Sedini mungkin dalam siklus hidup pengembangan software.", "Hanya saat fase testing resmi dimulai."], ans: 2, cat: "Fundamentals" },
+            { q: "Manakah yang membedakan 'Failure' dari 'Defect'?", options: ["Failure adalah kesalahan kode, Defect adalah penyimpangan saat runtime.", "Failure adalah penyimpangan sistem dari perilaku yang diharapkan, Defect adalah kesalahan pada artefak kerja.", "Failure ditemukan oleh developer, Defect ditemukan oleh tester.", "Tidak ada perbedaan antara keduanya."], ans: 1, cat: "Fundamentals" },
+            { q: "Prinsip 'Testing is context dependent' berarti:", options: ["Testing selalu sama untuk setiap aplikasi.", "Testing di toko online berbeda dengan testing di sistem kontrol pesawat.", "Testing hanya dilakukan pada konteks UI.", "Testing tergantung pada siapa managernya."], ans: 1, cat: "Fundamentals" },
+            { q: "Apa yang dimaksud dengan 'Confirmation Testing'?", options: ["Mengetes fitur baru.", "Mengetes kembali untuk memastikan bug yang dilaporkan telah diperbaiki.", "Mengetes dampak perubahan pada area lain.", "Mengetes performa server."], ans: 1, cat: "Fundamentals" },
+            { q: "Dalam model Agile, siapa yang bertanggung jawab atas kualitas?", options: ["Hanya QA Tester.", "Hanya Scrum Master.", "Seluruh tim (Whole-team approach).", "Hanya Product Owner."], ans: 2, cat: "SDLC" },
+            { q: "Apa fokus utama dari Integration Testing?", options: ["Fungsionalitas modul tunggal.", "Interaksi antar komponen atau sistem.", "Kebutuhan pengguna akhir.", "Struktur internal kode."], ans: 1, cat: "SDLC" },
+            { q: "Mana yang merupakan karakteristik dari Acceptance Testing?", options: ["Fokus pada penemuan bug teknis sebanyak mungkin.", "Biasanya dilakukan oleh pengguna atau pelanggan.", "Dilakukan oleh developer di lingkungan dev.", "Hanya fokus pada keamanan data."], ans: 1, cat: "SDLC" },
+            { q: "Apa perbedaan antara model Waterfall dan Agile dalam konteks testing?", options: ["Waterfall tidak melakukan testing.", "Agile melakukan testing secara berkelanjutan di setiap iterasi.", "Waterfall lebih cepat daripada Agile.", "Agile hanya melakukan testing di akhir project."], ans: 1, cat: "SDLC" },
+            { q: "Maintenance testing dilakukan karena:", options: ["Sistem sedang dikembangkan pertama kali.", "Adanya modifikasi, migrasi, atau penghentian (retirement) sistem.", "Developer ingin mengubah warna tombol.", "Dokumen requirement hilang."], ans: 1, cat: "SDLC" },
+            { q: "Apa tujuan dari 'Regression Testing'?", options: ["Mencari bug baru di fitur baru.", "Memastikan perubahan tidak merusak fungsi yang sudah ada.", "Menghitung jumlah baris kode.", "Melakukan instalasi ulang sistem."], ans: 1, cat: "SDLC" },
+            { q: "Dalam 'Shift-left' approach, aktivitas testing dimulai di:", options: ["Fase rilis.", "Fase persyaratan dan desain.", "Setelah fase coding selesai.", "Saat fase UAT."], ans: 1, cat: "SDLC" },
+
+            // CHAPTER 3
+            { q: "Manakah yang merupakan keuntungan dari Static Testing?", options: ["Dapat dijalankan tanpa butuh dokumen.", "Menemukan defect secara dini dan murah sebelum kode dijalankan.", "Dapat menguji performa server secara real-time.", "Hanya butuh waktu singkat tanpa persiapan."], ans: 1, cat: "Static Testing" },
+            { q: "Dalam review formal, siapa yang bertugas mencatat defect yang ditemukan?", options: ["Moderator", "Author", "Scribe (Notulis)", "Manager"], ans: 2, cat: "Static Testing" },
+            { q: "Review tipe 'Walkthrough' dicirikan oleh:", options: ["Dipimpin oleh Author untuk menjelaskan dokumen.", "Sangat formal dengan checklist ketat.", "Dilakukan tanpa melibatkan developer.", "Hanya bertujuan untuk mencari kesalahan ejaan."], ans: 0, cat: "Static Testing" },
+            { q: "Manakah defect yang paling mudah ditemukan dengan Static Analysis?", options: ["Variable yang didefinisikan tapi tidak pernah digunakan.", "Response time API yang lambat.", "User merasa warna background terlalu terang.", "Database kelebihan beban saat peak hour."], ans: 0, cat: "Static Testing" },
+
+            // CHAPTER 4
+            { q: "Teknik Black-box didasarkan pada:", options: ["Struktur kode program.", "Analisis dokumentasi persyaratan (specifications).", "Pengalaman tester sebelumnya.", "Random input tanpa dasar."], ans: 1, cat: "Test Design" },
+            { q: "Equivalence Partitioning bertujuan untuk:", options: ["Menguji setiap kemungkinan input.", "Membagi input ke dalam kelompok yang diproses secara serupa.", "Hanya menguji nilai batas minimum.", "Mencari bug pada logika percabangan IF."], ans: 1, cat: "Test Design" },
+            { q: "Input usia antara 18-60 tahun. Menggunakan 2-point Boundary Value Analysis, nilai mana yang diuji?", options: ["18, 60", "17, 18, 60, 61", "17, 61", "18, 19, 59, 60"], ans: 1, cat: "Test Design" },
+            { q: "Decision Table Testing sangat berguna untuk:", options: ["Menguji alur layar mobile app.", "Menguji kombinasi beberapa input yang menghasilkan aksi berbeda.", "Menguji seberapa cepat aplikasi terbuka.", "Menguji setiap baris kode."], ans: 1, cat: "Test Design" },
+            { q: "Apa itu State Transition Testing?", options: ["Menguji transisi sistem dari satu kondisi ke kondisi lain.", "Menguji sistem di berbagai negara bagian.", "Menguji database tabel.", "Menguji performa perpindahan tab browser."], ans: 0, cat: "Test Design" },
+            { q: "Berapa minimal test case untuk 100% Statement Coverage pada kode tanpa percabangan?", options: ["0", "1", "2", "Tergantung jumlah baris."], ans: 1, cat: "Test Design" },
+            { q: "Branch/Decision Coverage memastikan bahwa:", options: ["Setiap baris kode dijalankan.", "Setiap hasil keputusan (True/False) telah diuji minimal satu kali.", "User puas dengan aplikasinya.", "Input invalid ditolak."], ans: 1, cat: "Test Design" },
+            { q: "Error Guessing adalah teknik yang didasarkan pada:", options: ["Spesifikasi formal.", "Pengalaman dan intuisi tester tentang di mana bug biasanya muncul.", "Kode program.", "Checklist dari manager."], ans: 1, cat: "Test Design" },
+            { q: "Exploratory testing paling efektif ketika:", options: ["Dokumentasi sangat lengkap.", "Waktu terbatas dan tester ingin belajar aplikasi secara cepat.", "Aplikasi sudah stabil 100%.", "Hanya ingin melakukan regresi."], ans: 1, cat: "Test Design" },
+            { q: "Dalam Checklist-based testing, tester menggunakan:", options: ["Intuisi tanpa dokumen.", "Daftar poin-poin yang harus diperiksa berdasarkan pengalaman atau standar.", "Source code.", "Tabel keputusan."], ans: 1, cat: "Test Design" },
+            { q: "Manakah teknik yang termasuk White-box?", options: ["Boundary Value Analysis", "Decision Table", "Statement Testing", "Use Case Testing"], ans: 2, cat: "Test Design" },
+
+            // CHAPTER 5
+            { q: "Siapa yang biasanya membuat Test Plan?", options: ["Tester", "Test Manager / Lead", "Developer", "Client"], ans: 1, cat: "Management" },
+            { q: "Manakah yang merupakan kriteria 'Entry'?", options: ["Semua bug kritis telah diperbaiki.", "Lingkungan test sudah tersedia dan siap.", "Laporan akhir sudah ditandatangani.", "Budget sudah habis."], ans: 1, cat: "Management" },
+            { q: "Test Execution Schedule menentukan:", options: ["Siapa yang akan dipecat jika ada bug.", "Urutan pelaksanaan test case.", "Gaji para tester.", "Lokasi kantor testing."], ans: 1, cat: "Management" },
+            { q: "Defect Management bertujuan untuk:", options: ["Menghapus semua bug tanpa dicatat.", "Mencatat, melacak, dan mengelola status defect hingga selesai.", "Menyalahkan tim desain.", "Mengurangi jumlah test case."], ans: 1, cat: "Management" },
+            { q: "Apa fungsi Configuration Management dalam testing?", options: ["Mengatur meja kerja tester.", "Memastikan integritas artefak (kode, dokumen, test data) terkontrol versi.", "Memesan lisensi tool.", "Membuat laporan harian."], ans: 1, cat: "Management" },
+            { q: "Independent Testing berarti:", options: ["Tester bekerja sendirian di rumah.", "Testing dilakukan oleh orang yang berbeda dari pembuat kode.", "Testing tanpa menggunakan internet.", "Testing tanpa bantuan tool."], ans: 1, cat: "Management" },
+            { q: "Strategi testing yang didasarkan pada risiko disebut:", options: ["Analytical Strategy", "Model-based Strategy", "Risk-based Strategy", "Reactive Strategy"], ans: 2, cat: "Management" },
+            { q: "Apa isi dari Test Summary Report?", options: ["Rencana pengujian masa depan.", "Hasil evaluasi aktivitas testing terhadap kriteria exit.", "Kode sumber aplikasi.", "Daftar hadir meeting."], ans: 1, cat: "Management" },
+            { q: "Faktor apa yang paling mempengaruhi upaya (effort) testing?", options: ["Kualitas model pengembangan.", "Warna tema aplikasi.", "Jumlah monitor di meja tester.", "Lokasi server."], ans: 0, cat: "Management" },
+
+            // CHAPTER 6
+            { q: "Apa risiko menggunakan tool automasi?", options: ["Testing jadi terlalu cepat.", "Ekspektasi yang tidak realistis terhadap ROI tool tersebut.", "Tester jadi terlalu pintar.", "Harga software selalu gratis."], ans: 1, cat: "Tools" },
+            { q: "Tool untuk 'Test Execution' (seperti Selenium) berfungsi untuk:", options: ["Menulis requirement.", "Menjalankan script tes secara otomatis.", "Menganalisis kode tanpa dijalankan.", "Mengelola jadwal meeting."], ans: 1, cat: "Tools" },
+            { q: "Manakah keuntungan utama dari Test Automation?", options: ["Dapat menemukan bug baru secara otomatis tanpa script.", "Menjalankan pengujian berulang (regresi) secara efisien.", "Menghilangkan kebutuhan akan tester manusia.", "Selalu lebih murah daripada manual testing."], ans: 1, cat: "Tools" },
+            { q: "Konsep 'Data-driven testing' pada tool automasi berarti:", options: ["Tool membuat data sendiri.", "Script yang sama dijalankan dengan berbagai set data input dari file eksternal.", "Hanya menguji database.", "Menyimpan hasil tes ke dalam Excel."], ans: 1, cat: "Tools" }
+        ];
+
+        let currentIdx = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let timeLeft = 3600;
+
+        const navContainer = document.getElementById('question-nav');
+        const qLabel = document.getElementById('current-q-label');
+        const qText = document.getElementById('question-text');
+        const qCat = document.getElementById('q-category');
+        const optionsList = document.getElementById('options-list');
+        const timerDisplay = document.getElementById('timer-display');
+
+        function initNav() {
+            navContainer.innerHTML = '';
+            questions.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.id = `nav-${i}`;
+                btn.className = "h-9 rounded-lg text-xs font-bold border transition-all bg-slate-50 text-slate-400 border-slate-200";
+                btn.textContent = i + 1;
+                btn.onclick = () => { currentIdx = i; renderQuestion(); };
+                navContainer.appendChild(btn);
+            });
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIdx];
+            qLabel.textContent = `Pertanyaan ${currentIdx + 1} dari 40`;
+            qText.textContent = q.q;
+            qCat.textContent = q.cat;
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, i) => {
+                const div = document.createElement('div');
+                div.className = `option-card p-4 rounded-xl border-2 cursor-pointer transition-all flex gap-4 items-center ${userAnswers[currentIdx] === i ? 'selected-option' : 'border-slate-100 bg-slate-50'}`;
+                div.innerHTML = `
+                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${userAnswers[currentIdx] === i ? 'border-blue-600' : 'border-slate-300'}">
+                        ${userAnswers[currentIdx] === i ? '<div class="w-2.5 h-2.5 bg-blue-600 rounded-full"></div>' : ''}
+                    </div>
+                    <span class="text-sm text-slate-700">${opt}</span>
+                `;
+                div.onclick = () => { userAnswers[currentIdx] = i; renderQuestion(); };
+                optionsList.appendChild(div);
+            });
+
+            document.getElementById('btn-prev').disabled = currentIdx === 0;
+            document.getElementById('btn-next').textContent = currentIdx === questions.length - 1 ? "Selesaikan Ujian" : "Lanjut";
+            
+            // Update nav status
+            document.querySelectorAll('#question-nav button').forEach((btn, i) => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'bg-blue-100', 'text-blue-700', 'border-blue-400');
+                if (i === currentIdx) {
+                    btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                } else if (userAnswers[i] !== null) {
+                    btn.classList.add('bg-blue-100', 'text-blue-700', 'border-blue-400');
+                } else {
+                    btn.classList.add('bg-slate-50', 'text-slate-400', 'border-slate-200');
+                }
+            });
+        }
+
+        document.getElementById('btn-next').onclick = () => {
+            if (currentIdx < questions.length - 1) {
+                currentIdx++;
+                renderQuestion();
+            } else {
+                if (confirm("Apakah Anda yakin ingin mengumpulkan jawaban?")) finishQuiz();
+            }
+        };
+
+        document.getElementById('btn-prev').onclick = () => {
+            if (currentIdx > 0) {
+                currentIdx--;
+                renderQuestion();
+            }
+        };
+
+        function finishQuiz() {
+            let score = 0;
+            const topicData = {};
+
+            questions.forEach((q, i) => {
+                if (!topicData[q.cat]) topicData[q.cat] = { correct: 0, total: 0 };
+                topicData[q.cat].total++;
+                if (userAnswers[i] === q.ans) {
+                    score++;
+                    topicData[q.cat].correct++;
+                }
+            });
+
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.querySelector('.lg\\:col-span-1').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            document.getElementById('final-score').textContent = `${score}/40`;
+            const status = document.getElementById('pass-status');
+            const passed = score >= 26;
+            status.textContent = passed ? "LULUS" : "GAGAL";
+            status.className = `text-5xl font-black ${passed ? 'text-emerald-600' : 'text-rose-600'}`;
+
+            const analysis = document.getElementById('topic-analysis');
+            analysis.innerHTML = '<h3 class="font-bold text-slate-800 mb-4">Analisis per Topik:</h3>';
+            for (let cat in topicData) {
+                const p = Math.round((topicData[cat].correct / topicData[cat].total) * 100);
+                analysis.innerHTML += `
+                    <div class="mb-3">
+                        <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
+                            <span>${cat}</span>
+                            <span>${topicData[cat].correct}/${topicData[cat].total} (${p}%)</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="h-full ${p >= 65 ? 'bg-emerald-500' : 'bg-rose-500'}" style="width: ${p}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                timerDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                if (timeLeft < 300) timerDisplay.className = "bg-rose-50 text-rose-700 px-4 py-1.5 rounded-full border border-rose-200 font-mono font-bold text-sm animate-pulse";
+            } else {
+                finishQuiz();
+            }
+        }, 1000);
+
+        initNav();
+        renderQuestion();
+
+        function triggerFinish() {
+            const answered = userAnswers.filter(a => a !== null).length;
+            if (confirm(`Anda baru menjawab ${answered} dari 40 soal. Yakin ingin mengumpulkan?`)) {
+                finishQuiz();
+    }
+}
+    </script>
+</body>
+</html>
